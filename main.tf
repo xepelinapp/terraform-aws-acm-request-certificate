@@ -36,6 +36,7 @@ resource "aws_acm_certificate" "default" {
 }
 
 data "aws_route53_zone" "default" {
+  provider     = aws.xescapital
   for_each     = local.process_domain_validation_options ? toset(local.unique_zones) : toset([])
   zone_id      = var.zone_id
   name         = try(length(var.zone_id), 0) == 0 ? (var.zone_name == "" ? each.key : var.zone_name) : null
@@ -43,6 +44,7 @@ data "aws_route53_zone" "default" {
 }
 
 resource "aws_route53_record" "default" {
+  provider        = aws.xescapital
   for_each = {
     for dvo in local.domain_validation_options_set : dvo.domain_name => {
       name   = dvo.resource_record_name
